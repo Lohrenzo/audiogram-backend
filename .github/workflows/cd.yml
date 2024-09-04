@@ -26,11 +26,11 @@ jobs:
       - name: Set up virtual environment
         run: |
           python -m venv venv
-          source venv/Scripts/activate
+          source venv/bin/activate
 
       - name: Install dependencies
         run: |
-          source venv/Scripts/activate
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -43,11 +43,11 @@ jobs:
 
       - name: Setup up Requirements
         run: |
-          source venv/Scripts/activate
+          source venv/bin/activate
           chmod +x ./getEnv.sh && ./getEnv.sh
           python load_env.py
 
       - name: "${{github.event.inputs.choice}}"
         run: |
-          source venv/Scripts/activate
+          source venv/bin/activate
           zappa "${{github.event.inputs.choice}}" production
