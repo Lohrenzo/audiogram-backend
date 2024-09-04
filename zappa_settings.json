@@ -12,6 +12,7 @@
         "timeout_seconds": 30,
         "project_name": "audiogram-backend",
         "runtime": "python3.10",
+        "handler": "wsgi.handler",
         "s3_bucket": "audiogram-django-bucket"
     },
     "production": {
@@ -28,7 +29,6 @@
         "project_name": "audiogram-backend",
         "runtime": "python3.10",
         "s3_bucket": "audiogram-django-bucket",
-        "handler": "wsgi.handler",
         "timeout_seconds": 60
     }
 }
