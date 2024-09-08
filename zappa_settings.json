@@ -18,17 +18,11 @@
     "production": {
         "aws_region": "eu-west-2",
         "django_settings": "core.settings",
-        "exclude": [
-            "boto3",
-            "dateutil",
-            "botocore",
-            "s3transfer",
-            "concurrent"
-        ],
-        "slim_handler": true,
+        "slim_handler": false,
+        "timeout_seconds": 120,
         "project_name": "audiogram-backend",
         "runtime": "python3.10",
-        "s3_bucket": "audiogram-django-bucket",
-        "timeout_seconds": 60
+        "handler": "wsgi.handler",
+        "s3_bucket": "audiogram-django-bucket"
     }
 }
