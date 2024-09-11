@@ -187,10 +187,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1.5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
-    # "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.environ.get("JWT_SECRET_KEY"),
@@ -237,6 +236,7 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000/",
         "http://127.0.0.1:3000/",
+        "6tkguarbg2.execute-api.eu-west-2.amazonaws.com",
     ]
 
 ALLOWED_HOSTS = [

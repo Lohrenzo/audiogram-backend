@@ -31,35 +31,6 @@ class GenreSerializer(serializers.Serializer):
         return data
 
 
-class AlbumSerializer(serializers.Serializer):
-    title = serializers.CharField(required=True)
-    description = serializers.CharField(default="")
-    artist = serializers.SlugRelatedField(
-        # queryset=AUTH_USER_MODEL.objects.all(),
-        queryset=User.objects.all(),
-        default=serializers.CurrentUserDefault(),
-        slug_field="username",
-    )
-    cover = serializers.ImageField(allow_empty_file=True)
-    released = serializers.DateTimeField(read_only=True)
-
-    class Meta:
-        model = Album
-        fields = "__all__"
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Album` instance, given the validated data.
-        """
-        return Album.objects.create(**validated_data)
-
-    # def create(self, validated_data):
-    #     # Use the artist from the request context if not provided
-    #     if "artist" not in validated_data:
-    #         validated_data["artist"] = self.context["request"].user
-    #     return super().create(validated_data)
-
-
 class AudioSerializer(serializers.ModelSerializer):
     # genre = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all())
     genre = serializers.SlugRelatedField(
@@ -99,7 +70,6 @@ class AudioSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "artist",
-            "artist",
             "producer",
             "audio",
             "cover",
@@ -124,6 +94,43 @@ class AudioSerializer(serializers.ModelSerializer):
             )
             validated_data["album"] = album
         return super().create(validated_data)
+
+
+class AlbumSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(required=True)
+    description = serializers.CharField(default="")
+    artist = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault(),
+        slug_field="username",
+    )
+    cover = serializers.ImageField(allow_empty_file=True)
+    audios = AudioSerializer(many=True, read_only=True, source="audio_album")
+    released = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Album
+        fields = (
+            "id",
+            "title",
+            "description",
+            "artist",
+            "cover",
+            "audios",
+            "released",
+        )
+
+    def create(self, validated_data):
+        """
+        Create and return a new `Album` instance, given the validated data.
+        """
+        return Album.objects.create(**validated_data)
+
+    # def create(self, validated_data):
+    #     # Use the artist from the request context if not provided
+    #     if "artist" not in validated_data:
+    #         validated_data["artist"] = self.context["request"].user
+    #     return super().create(validated_data)
 
 
 class PlaylistAudiosField(serializers.ListField):

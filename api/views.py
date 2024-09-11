@@ -18,7 +18,11 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 
 from .models import Album, Audio, Genre, Playlist
-from .permission import AudioUserWritePermission, IsArtistPermission
+from .permission import (
+    AudioUserWritePermission,
+    AlbumUserWritePermission,
+    IsArtistPermission,
+)
 from .serializers import (
     AlbumSerializer,
     AudioSerializer,
@@ -247,6 +251,16 @@ class AlbumView(generics.ListCreateAPIView):
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class AlbumDetail(
+    generics.RetrieveUpdateDestroyAPIView,
+    AlbumUserWritePermission,
+):
+    permission_classes = [AlbumUserWritePermission]
+    parser_classes = [MultiPartParser]
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
 
 
 class UserAlbumsView(generics.ListAPIView):

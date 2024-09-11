@@ -2,6 +2,7 @@
 from django.urls import path
 from .views import (
     AlbumView,
+    AlbumDetail,
     UserAlbumsView,
     UserAudiosView,
     AudioDetail,
@@ -28,6 +29,11 @@ urlpatterns = [
     path("user/audios", UserAudiosView.as_view(), name="user-audios"),
     path("genre", GenreView.as_view(), name="genre"),
     path("album", AlbumView.as_view(), name="album"),
+    path(
+        "album/<int:pk>",
+        AlbumDetail.as_view(),
+        name="album_detail",
+    ),
     path("user/albums", UserAlbumsView.as_view(), name="user-albums"),
     path("likes", LikesView.as_view(), name="likes"),
     path("playlist", PlaylistView.as_view(), name="playlist"),

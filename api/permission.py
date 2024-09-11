@@ -16,6 +16,21 @@ class AudioUserWritePermission(BasePermission):
         return obj.artist == request.user
 
 
+class AlbumUserWritePermission(BasePermission):
+    """
+    Custom permission to only allow the artist that uploaded
+    the album to edit it.
+    """
+
+    message = "Editing albums is 'Restricted' to the artist only."
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+
+        return obj.artist == request.user
+
+
 class IsArtistPermission(BasePermission):
     """
     Custom permission to only allow artists to add new audio.

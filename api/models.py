@@ -60,7 +60,7 @@ class Album(models.Model):
         upload_to=album_cover_upload_path,
         validators=[validate_cover_image_size, validate_image_file_extension],
     )
-    releaded = models.DateTimeField(auto_now_add=True)
+    released = models.DateTimeField(auto_now_add=True)
 
     # slug = models.SlugField(blank=True, null=True)
 
