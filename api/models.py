@@ -1,5 +1,3 @@
-import re
-
 from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
@@ -11,27 +9,11 @@ from .validators import (
     validate_cover_image_size,
     validate_image_file_extension,
 )
-
-
-def format_title(title):
-    # Replace spaces with underscores and cap to 20 characters
-    return re.sub(r"\s+", "_", title.lower())[:20]
-
-
-def album_cover_upload_path(instance, filename):
-    # formatted_title = format_title(instance.title)
-    # return f"{formatted_title}/album_covers/{filename}"
-    return f"album_covers/{filename.lower()}"
-
-
-def audio_cover_upload_path(instance, filename):
-    # formatted_title = format_title(instance.title)
-    return f"audio_covers/{filename.lower()}"
-
-
-def audio_file_upload_path(instance, filename):
-    # formatted_title = format_title(instance.title)
-    return f"audios/{filename.lower()}"
+from .utils import (
+    album_cover_upload_path,
+    audio_cover_upload_path,
+    audio_file_upload_path,
+)
 
 
 class Genre(models.Model):
@@ -46,7 +28,6 @@ class Genre(models.Model):
 
 
 class Album(models.Model):
-    # id = models.Index
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     artist = models.ForeignKey(
@@ -61,8 +42,6 @@ class Album(models.Model):
         validators=[validate_cover_image_size, validate_image_file_extension],
     )
     released = models.DateTimeField(auto_now_add=True)
-
-    # slug = models.SlugField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.id:
@@ -99,7 +78,10 @@ class Audio(models.Model):
         on_delete=models.CASCADE,
         related_name="audio_artist",
     )
-    producer = models.CharField(max_length=255)
+    producer = models.CharField(
+        max_length=1024,
+        help_text="Comma-separated list of producers",
+    )
     audio = models.FileField(upload_to=audio_file_upload_path)
     cover = models.ImageField(
         null=True,

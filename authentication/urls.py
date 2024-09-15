@@ -6,14 +6,26 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView, TokenBlacklistView
 
 # from allauth.socialaccount.views import signup
-from .views import GoogleLogin, CustomRegisterView, CustomLoginView
+from .views import (
+    # GoogleLogin,
+    CustomRegisterView,
+    CustomLoginView,
+    UserUpdateView,
+    PasswordChangeView,
+)
 
 
 urlpatterns = [
-    path("register/", CustomRegisterView.as_view(), name="rest_register"),
-    path("login/", CustomLoginView.as_view(), name="rest_login"),
-    path("logout/", LogoutView.as_view(), name="rest_logout"),
-    path("user/", UserDetailsView.as_view(), name="rest_user_details"),
+    path("register/", CustomRegisterView.as_view(), name="register"),
+    path("login/", CustomLoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("user/", UserDetailsView.as_view(), name="user_details"),
+    path("user/update/", UserUpdateView.as_view(), name="user_update"),
+    path(
+        "user/change-password/",
+        PasswordChangeView.as_view(),
+        name="change_password",
+    ),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("token/refresh/", get_refresh_view().as_view(), name="token_refresh"),
     path(
@@ -21,6 +33,5 @@ urlpatterns = [
         TokenBlacklistView.as_view(),
         name="token_blacklist",
     ),
-    #
-    path("google/", GoogleLogin.as_view(), name="google_login"),
+    # path("google/", GoogleLogin.as_view(), name="google_login"),
 ]

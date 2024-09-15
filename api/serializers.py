@@ -37,10 +37,6 @@ class AudioSerializer(serializers.ModelSerializer):
         queryset=Genre.objects.all(),
         slug_field="title",
     )
-    # album = serializers.SlugRelatedField(
-    #     queryset=Album.objects.all(),
-    #     slug_field="title",
-    # )
     artist = serializers.SlugRelatedField(
         # queryset=AUTH_USER_MODEL.objects.all(),
         queryset=User.objects.all(),

@@ -3,13 +3,21 @@ from dj_rest_auth.registration.views import SocialLoginView, RegisterView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.views import LoginView
-from .serializers import CustomRegisterSerializer
+from .serializers import (
+    CustomRegisterSerializer,
+    PasswordChangeSerializer,
+    UserUpdateSerializer,
+)
+from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
+    parser_classes = [MultiPartParser, JSONParser]
 
     def get_response_data(self, user):
         # Generate the tokens for the user
@@ -70,3 +78,29 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     callback_url = "http://127.0.0.1:3000/"
     client_class = OAuth2Client
+
+
+class UserUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Return the current authenticated user
+        return self.request.user
+
+
+class PasswordChangeView(generics.UpdateAPIView):
+    serializer_class = PasswordChangeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Return the current authenticated user
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {"detail": "Password updated successfully."}, status=status.HTTP_200_OK
+        )
