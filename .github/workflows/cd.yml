@@ -1,9 +1,14 @@
 name: Continous Deployment
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      choice:
+        description: Choose Operation
+        options:
+          - update
+          - deploy
+        type: choice
 
 jobs:
   deploy:
