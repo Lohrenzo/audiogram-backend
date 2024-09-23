@@ -1,4 +1,5 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from .models import User
 from .validators import validate_dob
@@ -67,7 +68,28 @@ class CustomRegisterSerializer(RegisterSerializer):
         return user
 
 
+class CustomUserDetailsSerializer(serializers.ModelSerializer):
+    """
+    Custom serializer for the User model to include
+    additional fields like dob, bio, email, image, etc.
+    """
+    class Meta:
+        model = User
+        fields = (
+            "pk",  # Primary Key
+            "username",  # Username (default field)
+            "email",  # Email (readonly)
+            "first_name",  # First name (default field)
+            "last_name",  # Last name (default field)
+            "dob",  # Date of birth (additional field)
+            "bio",  # Biography (additional field)
+            "image",  # Profile image (additional field)
+        )
+        read_only_fields = ("pk", "email")  # Make email and primary key read-only
+
+
 class UserUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
     first_name = serializers.CharField(required=False)
     last_name = serializers.CharField(required=False, allow_blank=True)
     bio = serializers.CharField(required=False, allow_blank=True)
@@ -77,6 +99,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "username",
             "first_name",
             "last_name",
             "bio",
@@ -89,23 +112,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return validate_dob(value)
 
     def update(self, instance, validated_data):
-        # Update user details
-        # if "first_name" in validated_data:
-        #     instance.first_name = validated_data.get(
-        #         "first_name",
-        #         instance.first_name,
-        #     )
-        # if "last_name" in validated_data:
-        #     instance.last_name = validated_data.get(
-        #         "last_name",
-        #         instance.last_name,
-        #     )
-        # if "bio" in validated_data:
-        #     instance.bio = validated_data.get("bio", instance.bio)
-        # if "dob" in validated_data:
-        #     instance.dob = validated_data.get("dob", instance.dob)
-        # if "image" in validated_data:
-        #     instance.image = validated_data.get("image", instance.image)
+        """Update user details"""
 
         # Update only the fields that are provided in the request
         for field, value in validated_data.items():
@@ -120,16 +127,41 @@ class PasswordChangeSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True, write_only=True)
 
     def validate_old_password(self, value):
+        """
+        Ensure that the provided old password matches the current user's password.
+        """
         user = self.context["request"].user
         if not user.check_password(value):
-            raise serializers.ValidationError("Old password is not correct.")
+            raise serializers.ValidationError("Old password is incorrect.")
         return value
 
     def validate_new_password(self, value):
-        # Optional: Add any custom password validation here if necessary
+        """
+        Validate the new password using Django's built-in password validators.
+        You can also add custom password validation here if needed.
+        """
+        # Use Django's built-in password validators (e.g., length, complexity).
+        validate_password(value)
         return value
 
+    def validate(self, data):
+        """
+        Ensure that the new password is different from the old password.
+        """
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+
+        if old_password == new_password:
+            raise serializers.ValidationError(
+                "The new password cannot be the same as the old password."
+            )
+
+        return data
+
     def save(self, **kwargs):
+        """
+        Set the new password for the user and save it.
+        """
         user = self.context["request"].user
         user.set_password(self.validated_data["new_password"])
         user.save()

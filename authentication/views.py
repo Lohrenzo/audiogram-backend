@@ -2,11 +2,12 @@
 from dj_rest_auth.registration.views import SocialLoginView, RegisterView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.views import LoginView
+from dj_rest_auth.views import LoginView, UserDetailsView
 from .serializers import (
     CustomRegisterSerializer,
     PasswordChangeSerializer,
     UserUpdateSerializer,
+    CustomUserDetailsSerializer,
 )
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -80,9 +81,14 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
+class CustomUserDetailsView(UserDetailsView):
+    serializer_class = CustomUserDetailsSerializer
+
+
 class UserUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, JSONParser]
 
     def get_object(self):
         # Return the current authenticated user
@@ -92,6 +98,7 @@ class UserUpdateView(generics.RetrieveUpdateAPIView):
 class PasswordChangeView(generics.UpdateAPIView):
     serializer_class = PasswordChangeSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
 
     def get_object(self):
         # Return the current authenticated user
