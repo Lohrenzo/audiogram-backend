@@ -29,7 +29,7 @@ def update_zappa_settings():
     # Update environment variables in Zappa settings
     zappa_settings["production"]["environment_variables"] = env_vars
 
-    print(zappa_settings)
+    # print(zappa_settings)
 
     # Save updated Zappa settings
     with open("zappa_settings.json", "w") as file:
