@@ -10,12 +10,12 @@ def validate_cover_image_size(image):
     """
     Validate the size of the cover image.
     """
-    max_width = 1280
-    max_height = 1280
-    max_size = 2 * 1024 * 1024  # 2 MB
+    max_width = 4032
+    max_height = 4032
+    max_size = 5 * 1024 * 1024  # 5 MB
 
     if image.size > max_size:
-        raise ValidationError("Image size cannot exceed 2MB.")
+        raise ValidationError("Image size cannot exceed 5MB.")
 
     # Open the uploaded image using PIL
     img = Image.open(image)
@@ -23,7 +23,7 @@ def validate_cover_image_size(image):
 
     if width > max_width or height > max_height:
         raise ValidationError(
-            "Image dimensions cannot exceed 1280x1280 pixels.",
+            "Image dimensions cannot exceed 4032 X 4032 pixels.",
         )
 
     return image

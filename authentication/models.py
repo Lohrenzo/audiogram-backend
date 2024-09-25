@@ -9,6 +9,7 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from .utils import rename_image
+from .validators import validate_image_file_extension, validate_user_image_size
 
 
 class AccountManager(BaseUserManager):
@@ -58,9 +59,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=200, null=True, blank=True)
     image = models.ImageField(
-        upload_to=rename_image,
         null=True,
         blank=True,
+        upload_to=rename_image,
+        validators=[validate_user_image_size, validate_image_file_extension],
     )
     bio = models.TextField(max_length=2000, null=True, blank=True, default="")
     dob = models.DateField(default=datetime.date(2006, 1, 1))
