@@ -143,17 +143,24 @@ class PlaylistAudiosField(serializers.ListField):
 
 class PlaylistSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True)
-    description = serializers.CharField(default="")
-    creator = serializers.SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field="username",
+    description = serializers.CharField(
+        required=False,
+        allow_null=True,
+        default="",
     )
-    audios = PlaylistAudiosField()
+    creator = serializers.SlugRelatedField(
+        # queryset=User.objects.all(),
+        slug_field="username",
+        default=serializers.CurrentUserDefault(),
+        read_only=True,
+    )
+    audios = PlaylistAudiosField(required=False)
     # audios = AudioSerializer(many=True)
     # audios = serializers.PrimaryKeyRelatedField(
     #     queryset=Audio.objects.all(),
     #     many=True,  # Allow multiple audios
     # )
+    created = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Playlist
@@ -163,4 +170,16 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "description",
             "creator",
             "audios",
+            "created",
         )
+
+    def create(self, validated_data):
+        # Pop the audios field from validated_data if it exists
+        audios = validated_data.pop("audios", None)
+        playlist = Playlist.objects.create(**validated_data)
+
+        # If audios were provided, add them to the playlist
+        if audios:
+            playlist.audios.add(*audios)
+
+        return playlist

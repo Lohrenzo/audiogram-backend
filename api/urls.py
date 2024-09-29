@@ -11,6 +11,7 @@ from .views import (
     LikesView,
     PlaylistDetail,
     PlaylistView,
+    UserPlaylistsView,
     increment_play_count,
 )
 
@@ -42,5 +43,6 @@ urlpatterns = [
         PlaylistDetail.as_view(),
         name="playlist_detail",
     ),
+    path("user/playlists", UserPlaylistsView.as_view(), name="user-albums"),
     # path("events", include(django_eventstream.urls), {"channels": ["test"]}),
 ]

@@ -218,7 +218,8 @@ class AlbumView(generics.ListCreateAPIView):
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
+        Instantiates and returns the list of permissions
+        that this view requires.
         - For 'POST' requests: Only artists can create new albums.
         - For 'GET' requests: Only authenticated users can view albums.
         """
@@ -292,18 +293,27 @@ class UserAlbumsView(generics.ListAPIView):
 
 
 class PlaylistView(generics.ListCreateAPIView):
-    # Define the queryset and serializers
+    """
+    View to list all playlists and allow
+    authenticated users to create a new playlist.
+    """
+
     queryset = Playlist.objects.all()
     parser_classes = [MultiPartParser, JSONParser]
     serializer_class = PlaylistSerializer
     permission_classes = [IsAuthenticated]
 
-    # Override the post method to handle the creation of a new playlist
     def post(self, request):
-        print(request.data)
-        serializer = PlaylistSerializer(data=request.data)
+        """
+        Allow authenticated users to create a new playlist.
+        """
+        # print(request.data)
+        serializer = PlaylistSerializer(
+            data=request.data,
+            context={"request": request},
+        )
         if serializer.is_valid():
-            playlist = serializer.save()
+            playlist = serializer.save(creator=request.user)
             return Response(
                 f"Playlist '{playlist.title}' created.",
                 status=status.HTTP_200_OK,
@@ -315,48 +325,42 @@ class PlaylistView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    # Override the get_queryset method to filter by user_id if provided
     def get_queryset(self):
+        """
+        Return all available playlists.
+        """
         queryset = Playlist.objects.all()
-        # Get the user_id from query parameters
-        user_id = self.request.query_params.get("user_id", None)
-
-        # Extract JWT token from the Authorization header
-        token = self.request.headers.get("Authorization", None)
-        if token is None:
-            raise AuthenticationFailed("Authorization header is missing.")
-
-        # Remove the 'Bearer ' part if present
-        if token.startswith("Bearer "):
-            token = token[7:]
-
-        # Decode the JWT token
-        try:
-            payload = jwt.decode(
-                token,
-                os.environ.get("JWT_SECRET_KEY"),
-                algorithms=[os.environ.get("JWT_ALGORITHM")],
-            )
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("Token has expired.")
-        except jwt.InvalidTokenError:
-            raise AuthenticationFailed("Invalid token.")
-
-        # Extract user_id from the token payload
-        token_user_id = payload.get("user_id")
-
-        # Ensure the user_id from query params matches
-        # the user_id from the token
-        # Filter the queryset by creator's user ID if user_id is present
-        if user_id is not None and int(user_id) == token_user_id:
-            queryset = queryset.filter(creator__id=user_id)
-        else:
-            raise AuthenticationFailed("User ID mismatch or missing.")
-
         return queryset
 
-    # Override the list method to return the filtered queryset
+    # # Override the list method to return the filtered queryset
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.get_queryset()
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(
+    #         serializer.data,
+    #         status=status.HTTP_200_OK,
+    #         content_type="application/json",
+    #     )
+
+
+class UserPlaylistsView(generics.ListAPIView):
+    """
+    View to return the playlists created by the current user.
+    """
+
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Return playlists where the current user is the creator.
+        """
+        return Playlist.objects.filter(creator=self.request.user)
+
     def list(self, request, *args, **kwargs):
+        """
+        Override the list method to customize the response.
+        """
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(

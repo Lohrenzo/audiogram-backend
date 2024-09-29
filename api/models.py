@@ -169,7 +169,12 @@ class Playlist(models.Model):
         on_delete=models.CASCADE,
         related_name="playlist_creator",
     )
-    audios = models.ManyToManyField(Audio, related_name="playlist_audios")
+    audios = models.ManyToManyField(
+        Audio,
+        related_name="playlist_audios",
+        blank=True,
+    )
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "Playlists"
