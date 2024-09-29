@@ -12,7 +12,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-# from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -20,40 +20,40 @@ class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
     parser_classes = [MultiPartParser, JSONParser]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        user = self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        data = self.get_response_data(user)
-        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     if not serializer.is_valid():
+    #         return Response(
+    #             serializer.errors,
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     user = self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     data = self.get_response_data(user)
+    #     return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
-    # def get_response_data(self, user):
-    #     # Generate the tokens for the user
-    #     refresh = RefreshToken.for_user(user)
-    #     access = refresh.access_token
+    def get_response_data(self, user):
+        # Generate the tokens for the user
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
 
-    #     # Custom response data
-    #     data = {
-    #         "access": str(access),
-    #         "refresh": str(refresh),
-    #         "user": {
-    #             "pk": user.pk,
-    #             "username": user.username,
-    #             "email": user.email,
-    #             "first_name": user.first_name,
-    #             "last_name": user.last_name,
-    #             "is_artist": user.is_artist,
-    #             "bio": user.bio,
-    #             "dob": user.dob,
-    #             "image": user.image.url if user.image else None,
-    #         },
-    #     }
-    #     return data
+        # Custom response data
+        data = {
+            "access": str(access),
+            "refresh": str(refresh),
+            "user": {
+                "pk": user.pk,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_artist": user.is_artist,
+                "bio": user.bio,
+                "dob": user.dob,
+                "image": user.image.url if user.image else None,
+            },
+        }
+        return data
 
 
 class CustomLoginView(LoginView):
