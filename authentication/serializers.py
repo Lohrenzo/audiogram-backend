@@ -36,10 +36,16 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
+        # Capitalize first and last name
+        first_name = self.validated_data.get("first_name", "").capitalize()
+        last_name = self.validated_data.get("last_name", "").capitalize()
+        # Lowercase the email
+        email = self.validated_data.get("email", "").lower()
         data.update(
             {
-                "first_name": self.validated_data.get("first_name", ""),
-                "last_name": self.validated_data.get("last_name", ""),
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
                 "bio": self.validated_data.get("bio", ""),
                 "dob": self.validated_data.get("dob", ""),
                 "image": self.validated_data.get("image", None),
@@ -52,8 +58,9 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def save(self, request):
         user = super().save(request)
-        user.first_name = self.cleaned_data.get("first_name")
-        user.last_name = self.cleaned_data.get("last_name")
+        user.first_name = self.cleaned_data.get("first_name").capitalize()
+        user.last_name = self.cleaned_data.get("last_name").capitalize()
+        user.email = self.cleaned_data["email"]
         user.bio = self.cleaned_data.get("bio")
         user.dob = self.cleaned_data.get("dob")
         user.is_artist = self.cleaned_data.get(
@@ -73,6 +80,7 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     Custom serializer for the User model to include
     additional fields like dob, bio, email, image, etc.
     """
+
     class Meta:
         model = User
         fields = (
