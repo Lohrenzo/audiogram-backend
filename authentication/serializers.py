@@ -93,7 +93,8 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
             "bio",  # Biography (additional field)
             "image",  # Profile image (additional field)
         )
-        read_only_fields = ("pk", "email")  # Make email and primary key read-only
+        # Make email and primary key read-only
+        read_only_fields = ("pk", "email")
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
@@ -136,7 +137,8 @@ class PasswordChangeSerializer(serializers.Serializer):
 
     def validate_old_password(self, value):
         """
-        Ensure that the provided old password matches the current user's password.
+        Ensure that the provided old password matches
+        the current user's password.
         """
         user = self.context["request"].user
         if not user.check_password(value):
