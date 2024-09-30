@@ -47,9 +47,10 @@ def validate_user_image_size(image):
 
         # Save the resized image to an in-memory file
         output = BytesIO()
-        img_format = (
-            image.format if image.format else "JPEG"
-        )  # Use original format or fallback to JPEG
+
+        # Use original format or fallback to JPEG
+        img_format = img.format if img.format else "JPEG"
+
         img.save(output, format=img_format)
         output.seek(0)
 
