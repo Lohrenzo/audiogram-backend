@@ -19,6 +19,13 @@
     "production": {
         "aws_region": "eu-west-2",
         "django_settings": "core.settings",
+        "exclude": [
+            "boto3",
+            "dateutil",
+            "botocore",
+            "s3transfer",
+            "concurrent"
+        ],
         "slim_handler": false,
         "timeout_seconds": 120,
         "project_name": "audiogram-backend",
