@@ -1,12 +1,8 @@
-import os
-
-import jwt
-
 # from django.conf import settings
+# from rest_framework.exceptions import AuthenticationFailed
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status  # viewsets,
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.parsers import JSONParser, MultiPartParser  # FormParser,
 from rest_framework.permissions import (
     # DjangoModelPermissions,
@@ -180,7 +176,8 @@ class GenreView(generics.ListCreateAPIView):
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
+        Instantiates and returns the list
+        of permissions that this view requires.
         - For 'POST' requests: Only admins can create new genres.
         - For 'GET' requests: Only authenticated users can view genres.
         """

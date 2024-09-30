@@ -150,8 +150,8 @@ if USE_S3 is True:
                 "bucket_name": os.environ.get("AWS_STORAGE_BUCKET_NAME"),
                 "region_name": os.environ.get("AWS_S3_REGION_NAME"),
                 "default_acl": os.environ.get("AWS_DEFAULT_ACL"),
-                # "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
-                # "querystring_expire": 600,
+                "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
+                "querystring_expire": 600,
             },
         },
         "staticfiles": {
@@ -162,8 +162,8 @@ if USE_S3 is True:
                 "bucket_name": os.environ.get("AWS_STORAGE_BUCKET_NAME"),
                 "region_name": os.environ.get("AWS_S3_REGION_NAME"),
                 "default_acl": os.environ.get("AWS_DEFAULT_ACL"),
-                # "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
-                # "querystring_expire": 600,
+                "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
+                "querystring_expire": 600,
             },
         },
     }
@@ -183,6 +183,7 @@ AUTH_USER_MODEL = "authentication.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ]
 }
 
