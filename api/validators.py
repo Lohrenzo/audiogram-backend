@@ -29,8 +29,8 @@ def validate_cover_image_size(image):
         new_width = int(width * resize_ratio)
         new_height = int(height * resize_ratio)
 
-        # Resize the image
-        img = img.resize((new_width, new_height), Image.ANTIALIAS)
+        # Resize the image using the new LANCZOS resampling method
+        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
         # Save the resized image to an in-memory file
         output = BytesIO()
