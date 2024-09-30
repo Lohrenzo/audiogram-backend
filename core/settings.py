@@ -149,8 +149,8 @@ if USE_S3 is True:
                 "secret_key": os.environ.get("AWS_SECRET_ACCESS_KEY"),
                 "bucket_name": os.environ.get("AWS_STORAGE_BUCKET_NAME"),
                 "region_name": os.environ.get("AWS_S3_REGION_NAME"),
-                "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
-                "querystring_expire": 600,
+                # "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
+                # "querystring_expire": 600,
             },
         },
         "staticfiles": {
@@ -160,8 +160,8 @@ if USE_S3 is True:
                 "secret_key": os.environ.get("AWS_SECRET_ACCESS_KEY"),
                 "bucket_name": os.environ.get("AWS_STORAGE_BUCKET_NAME"),
                 "region_name": os.environ.get("AWS_S3_REGION_NAME"),
-                "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
-                "querystring_expire": 600,
+                # "custom_domain": os.environ.get("AWS_CUSTOM_DOMAIN"),
+                # "querystring_expire": 600,
             },
         },
     }
