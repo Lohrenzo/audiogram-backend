@@ -368,7 +368,47 @@ class UserPlaylistsView(generics.ListAPIView):
 
 
 class PlaylistDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, JSONParser]
     queryset = Playlist.objects.all()
     serializer_class = PlaylistSerializer
+
+    def post(self, request, *args, **kwargs):
+        """
+        POST request to add an audio to the playlist.
+        The request should contain an `audio_id` which will be added to the playlist specified by the `pk`.
+        """
+        playlist = self.get_object()  # Retrieve the playlist based on `pk` in the URL
+        audio_id = request.data.get(
+            "audio_id"
+        )  # Extract `audio_id` from the request data
+
+        if not audio_id:
+            return Response(
+                {"detail": "audio_id is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Retrieve the audio using the audio_id, return 404 if not found
+        audio = get_object_or_404(Audio, id=audio_id)
+
+        # Add the audio to the playlist (if not already added)
+        if audio in playlist.audios.all():
+            return Response(
+                {"detail": "Audio is already in the playlist."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        playlist.audios.add(
+            audio
+        )  # Add the audio to the playlist's `audios` many-to-many field
+
+        return Response(
+            {"detail": f"Audio '{audio.title}' added to playlist '{playlist.title}'."},
+            status=status.HTTP_200_OK,
+        )
+
+    def put(self, request, *args, **kwargs):
+        """
+        PUT request to add audios to the playlist (same as POST, for flexibility).
+        """
+        return self.post(request, *args, **kwargs)

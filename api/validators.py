@@ -1,4 +1,5 @@
 import os
+import mimetypes
 
 from django.core.exceptions import ValidationError
 from PIL import Image
@@ -42,15 +43,35 @@ def validate_cover_image_size(image):
         output.seek(0)
 
         # Replace the original image with the resized image
-        image = InMemoryUploadedFile(
+        # image = InMemoryUploadedFile(
+        #     output,  # The resized image as a file
+        #     image.field_name,  # Field name in the form
+        #     image.name,  # Original image file name
+        #     image.content_type,  # Original content type (e.g., image/jpeg)
+        #     output.getbuffer().nbytes,  # Size of the resized image
+        #     image.charset,  # Character set of the original file
+        # )
+
+        # Get the MIME type based on the file extension using mimetypes module
+        mime_type, _ = mimetypes.guess_type(image.name)
+        if not mime_type:
+            mime_type = "image/jpeg"  # Default to JPEG if MIME type is unknown
+
+        # Create a new InMemoryUploadedFile
+        image_name = image.name
+        image_file = InMemoryUploadedFile(
             output,  # The resized image as a file
-            image.field_name,  # Field name in the form
-            image.name,  # Original image file name
-            image.content_type,  # Original content type (e.g., image/jpeg)
+            None,  # Field name, can be None when handling this manually
+            image_name,  # Original image file name
+            mime_type,  # The detected MIME type (e.g., image/jpeg)
             output.getbuffer().nbytes,  # Size of the resized image
-            image.charset,  # Character set of the original file
+            None,  # Charset can be None for image files
         )
 
+        # Return the resized image
+        return image_file
+
+    # Return the original image if it passes all validations
     return image
 
 

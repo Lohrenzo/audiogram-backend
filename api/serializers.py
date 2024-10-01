@@ -79,16 +79,39 @@ class AudioSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        if "album" not in validated_data or not validated_data["album"]:
-            # Create a new album if no album is provided
-            album_title = f"{validated_data['title']} - Single"
-            album_cover = validated_data.get("cover")
-            album, created = Album.objects.get_or_create(
-                title=album_title,
-                artist=validated_data.get("artist"),
-                defaults={"cover": album_cover},
-            )
-            validated_data["album"] = album
+        # Check if the audio is properly opened before saving
+        if "audio" in validated_data:
+
+            if "album" not in validated_data or not validated_data["album"]:
+                # Create a new album if no album is provided
+                album_title = f"{validated_data['title']} - Single"
+                album_cover = validated_data.get("cover")
+
+                # Ensure the artist is provided in validated_data
+                artist = validated_data.get("artist")
+                if artist is None:
+                    raise serializers.ValidationError(
+                        {"artist": "Artist is required to create an album."}
+                    )
+
+                album, created = Album.objects.get_or_create(
+                    title=album_title,
+                    artist=artist,
+                    defaults={"cover": album_cover},
+                )
+
+                # Optionally log whether the album was created or retrieved
+                if created:
+                    print(f"Created new album: {album_title}")
+                else:
+                    print(f"Retrieved existing album: {album_title}")
+
+                validated_data["album"] = album
+            # audio = validated_data["audio"]
+
+            # validated_data["audio"] = audio.file
+            print("Validated Data For Audio: ", validated_data)
+
         return super().create(validated_data)
 
 
