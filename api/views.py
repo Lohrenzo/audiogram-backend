@@ -376,16 +376,19 @@ class PlaylistDetail(generics.RetrieveUpdateDestroyAPIView):
     def post(self, request, *args, **kwargs):
         """
         POST request to add an audio to the playlist.
-        The request should contain an `audio_id` which will be added to the playlist specified by the `pk`.
+        The request should contain an `audio_id` which
+        will be added to the playlist specified by the `pk`.
         """
-        playlist = self.get_object()  # Retrieve the playlist based on `pk` in the URL
+        # Retrieve the playlist based on `pk` in the URL
+        playlist = self.get_object()
         audio_id = request.data.get(
             "audio_id"
         )  # Extract `audio_id` from the request data
 
         if not audio_id:
             return Response(
-                {"detail": "audio_id is required."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "audio_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Retrieve the audio using the audio_id, return 404 if not found
@@ -409,6 +412,7 @@ class PlaylistDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         """
-        PUT request to add audios to the playlist (same as POST, for flexibility).
+        PUT request to add audios to the playlist
+        (same as POST, for flexibility).
         """
         return self.post(request, *args, **kwargs)
