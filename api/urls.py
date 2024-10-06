@@ -43,6 +43,6 @@ urlpatterns = [
         PlaylistDetail.as_view(),
         name="playlist_detail",
     ),
-    path("user/playlists", UserPlaylistsView.as_view(), name="user-albums"),
+    path("user/playlists", UserPlaylistsView.as_view(), name="user-playlists"),
     # path("events", include(django_eventstream.urls), {"channels": ["test"]}),
 ]

@@ -56,6 +56,8 @@ class AudioSerializer(serializers.ModelSerializer):
         required=False,  # Make the album field optional
         allow_null=True,
     )
+    audio = serializers.FileField()
+    cover = serializers.ImageField(allow_empty_file=True, required=False)
     released = serializers.DateTimeField(read_only=True)
     edited = serializers.DateTimeField(read_only=True)
     play_count = serializers.IntegerField(read_only=True)
@@ -81,6 +83,8 @@ class AudioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Check if the audio is properly opened before saving
         if "audio" in validated_data:
+            # Ensure that audio is being uploaded
+            print("Audio file received: ", validated_data.get("audio"))
 
             if "album" not in validated_data or not validated_data["album"]:
                 # Create a new album if no album is provided
