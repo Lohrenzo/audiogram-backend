@@ -9,6 +9,7 @@ class StreamRecordSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault(),
         slug_field="id",
     )
+    timestamp = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = StreamRecord

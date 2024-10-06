@@ -1,22 +1,29 @@
 from django.urls import path
 from .views import (
-    StreamRecordCreateView,
-    AllStreamsView,
-    ArtistStreamsView,
+    StreamRecordListCreateView,
     CalculateARSView,
+    AudioTrackStreamCountView,
 )
 
 urlpatterns = [
-    path("streams/", StreamRecordCreateView.as_view(), name="create-stream"),
-    path("streams/all/", AllStreamsView.as_view(), name="all-streams"),
     path(
-        "streams/artist/<int:artist_id>/",
-        ArtistStreamsView.as_view(),
-        name="artist-streams",
+        "stream",
+        StreamRecordListCreateView.as_view(),
+        name="create-stream",
     ),
+    # path(
+    #     "stream/artist/<int:artist_id>/count",
+    #     ArtistStreamCountView.as_view(),
+    #     name="artist-streams",
+    # ),
     path(
-        "streams/artist/<int:artist_id>/calculate-ars/",
+        "stream/artist/<int:artist_id>/calculate-ars",
         CalculateARSView.as_view(),
         name="calculate-ars",
+    ),
+    path(
+        "stream/audio/<int:audio_id>/count",
+        AudioTrackStreamCountView.as_view(),
+        name="audio-stream-count",
     ),
 ]
