@@ -126,27 +126,26 @@ class Audio(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        # if not self.time_length:
-        #     # pass
-        #     audio_length = get_audio_length()
-        #     self.time_length = audio_length
-
-        if self.id:
+        """Handle file deletion when replacing existing audio or cover."""
+        if self.id:  # Check if the instance already exists in the database
             existing = get_object_or_404(Audio, id=self.id)
+            # Delete old cover if it has changed
             if existing.cover != self.cover:
                 existing.cover.delete(save=False)
+            # Delete old audio file if it has changed
             if existing.audio != self.audio:
                 existing.audio.delete(save=False)
-        # return super().save(*args, **kwargs)
-        super(Audio, self).save(*args, **kwargs)
+
+        # Call the parent class's save method
+        super().save(*args, **kwargs)
 
     @receiver(models.signals.pre_delete, sender="api.Audio")
     def audio_delete_files(sender, instance, **kwargs):
-        for field in instance._meta.fields:
-            if field.name == "cover" or field.name == "audio":
-                file = getattr(instance, field.name)
-                if file:
-                    file.delete(save=False)
+        """Delete related files when an audio instance is deleted."""
+        for field in ["cover", "audio"]:  # List the fields to check
+            file = getattr(instance, field)
+            if file:
+                file.delete(save=False)
 
     class Meta:
         verbose_name_plural = "Audios"
