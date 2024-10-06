@@ -56,7 +56,6 @@ python-decouple==3.8
 python-dotenv==1.0.1
 python-slugify==8.0.4
 python3-openid==3.2.0
-pywin32==306
 PyYAML==6.0.2
 pyzmq==26.2.0
 requests==2.32.3
