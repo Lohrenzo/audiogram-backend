@@ -134,9 +134,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, "build/static")]
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "static/"
 
 USE_S3 = bool(os.environ.get("USE_S3_STATIC", "False"))
 
@@ -240,6 +240,15 @@ else:
         "https://audiogram-frontend.vercel.app/",
         "6tkguarbg2.execute-api.eu-west-2.amazonaws.com",
     ]
+
+# CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000/",
+    "http://127.0.0.1:3000/",
+    "https://audiogram-frontend.vercel.app/",
+    "https://6tkguarbg2.execute-api.eu-west-2.amazonaws.com",
+]
+
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
