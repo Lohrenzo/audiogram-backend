@@ -254,6 +254,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "6tkguarbg2.execute-api.eu-west-2.amazonaws.com",
     "audiogram-backend-pi2a.onrender.com",
+    ".vercel.app",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
